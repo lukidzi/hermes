@@ -24,11 +24,6 @@ def getAlpnVersion() {
     def javaVersion = System.getProperty("java.version")
     def matcher = (javaVersion =~ /_(\d+)(-.*)?/)
     def version = matcher.find() ? Integer.parseInt(matcher.group(1)) : 0
-    if(JavaVersion.current() != JavaVersion.VERSION_1_8){
-        project.logger.quiet("Java: ${javaVersion}")
-        return "8.1.13.v20181017"
-    }
-
     def alpnVersion = {
         switch(version) {
             case 0..24:
@@ -91,12 +86,11 @@ dependencies {
     testCompile group: 'org.eclipse.jetty', name: 'jetty-servlet', version: versions.jetty
     testCompile group: 'org.eclipse.jetty', name: 'jetty-servlets', version: versions.jetty
     testCompile group: 'org.glassfish.jersey.bundles.repackaged', name: 'jersey-guava', version: '2.23.2'
-    //testCompile group: 'org.mortbay.jetty.alpn', name: 'alpn-boot', version: '8.1.13.v20181017'
 
     testCompile(group: 'org.hornetq', name: 'hornetq-jms-server', version: '2.4.1.Final') {
         exclude module: 'hornetq-native'
     }
-
+    //jdk8
    // testCompile group: 'org.eclipse.jetty.alpn', name: 'alpn-api', version: versions.alpn_api
    // alpnboot group: 'org.mortbay.jetty.alpn', name: 'alpn-boot', version: getAlpnVersion()
 }
@@ -121,8 +115,10 @@ project.sourceSets {
 }
 
 task integrationTest(type: Test) {
-//    def args = ["-Xbootclasspath/a:${project.configurations.alpnboot.asPath}"]
     def args = []
+    if(JavaVersion.current() == JavaVersion.VERSION_1_8) {
+        args = ["-Xbootclasspath/a:${project.configurations.alpnboot.asPath}"]
+    }
     if(project.hasProperty('tests.timeout.multiplier')) {
         args += "-Dtests.timeout.multiplier=${project.property('tests.timeout.multiplier')}"
     }
