@@ -13,13 +13,13 @@ import tech.allegro.schema.json2avro.converter.JsonAvroConverter
 class HermesMockAvroTest extends Specification {
     @ClassRule
     @Shared
-    HermesMockRule hermes = new HermesMockRule(56789)
+    HermesMockRule hermes = new HermesMockRule(56790)
 
     Schema schema = ReflectData.get().getSchema(TestMessage)
 
     JsonAvroConverter jsonAvroConverter = new JsonAvroConverter()
 
-    HermesPublisher publisher = new HermesPublisher("http://localhost:56789")
+    HermesPublisher publisher = new HermesPublisher("http://localhost:56790")
 
     def setup() {
         hermes.resetReceivedRequest()

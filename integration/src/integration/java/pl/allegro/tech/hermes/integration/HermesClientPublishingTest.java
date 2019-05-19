@@ -12,11 +12,19 @@ import pl.allegro.tech.hermes.client.okhttp.OkHttpHermesSender;
 import pl.allegro.tech.hermes.client.restTemplate.RestTemplateHermesSender;
 import pl.allegro.tech.hermes.common.ssl.KeystoreProperties;
 import pl.allegro.tech.hermes.common.ssl.JvmKeystoreSslContextFactory;
+import pl.allegro.tech.hermes.common.ssl.WrappedSSLContext;
 import pl.allegro.tech.hermes.test.helper.message.TestMessage;
 
-import javax.net.ssl.SSLContext;
+import javax.net.ssl.*;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.net.URI;
+import java.security.*;
+import java.security.cert.CertificateException;
+import java.util.Arrays;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.net.URI.create;
 import static javax.ws.rs.client.ClientBuilder.newClient;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -112,11 +120,11 @@ public class HermesClientPublishingTest extends IntegrationTest {
 
     private OkHttpClient getOkHttpClientWithSslContextConfigured() {
         return new OkHttpClient.Builder()
-                .sslSocketFactory(getSslContext().getSocketFactory())
+                .sslSocketFactory(getSslContext().getSslContext().getSocketFactory(), getSslContext().getTrustManager())
                 .build();
     }
 
-    private SSLContext getSslContext() {
+    private WrappedSSLContext getSslContext() {
         KeystoreProperties keystore = new KeystoreProperties("classpath:client.keystore", "JKS", "password");
         KeystoreProperties truststore = new KeystoreProperties("classpath:client.truststore", "JKS", "password");
         return new JvmKeystoreSslContextFactory("TLS", keystore, truststore).create();
