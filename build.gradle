@@ -116,6 +116,9 @@ configure(subprojects - project(':integration')) {
 }
 
 subprojects {
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
+
     configurations {
         all*.exclude group: "org.slf4j", module: "slf4j-log4j12"
         all*.exclude group: "log4j", module: "log4j"

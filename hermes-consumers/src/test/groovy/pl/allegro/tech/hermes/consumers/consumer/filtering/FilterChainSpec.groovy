@@ -27,7 +27,7 @@ class FilterChainSpec extends Specification {
     def "should apply global filters before subscription specific"() {
         given:
         def subscription = subscription("g.topic", "subscription")
-                .withFilter(new MessageFilterSpecification(["type":"$subscriptionFilter1.type".toString()])).build()
+                .withFilter(new MessageFilterSpecification(["type": "$subscriptionFilter1.type".toString()])).build()
 
         when:
         def result = new FilterChainFactory(filterSource).create(subscription).apply(testMessage())
@@ -42,7 +42,7 @@ class FilterChainSpec extends Specification {
 
     def "should throw exception for non-existing filter"() {
         given:
-        def subscription = subscription("g.topic", "subscription").withFilter(new MessageFilterSpecification(["type":"foo"])).build()
+        def subscription = subscription("g.topic", "subscription").withFilter(new MessageFilterSpecification(["type": "foo"])).build()
 
         when:
         new FilterChainFactory(filterSource).create(subscription).apply(testMessage())
@@ -70,8 +70,8 @@ class FilterChainSpec extends Specification {
         given:
         def filterSource = new MessageFilters([], [subscriptionFilter1, subscriptionFilter2])
         def subscription = subscription("g.topic", "subscription")
-                .withFilter(new MessageFilterSpecification(["type":"$subscriptionFilter1.type".toString()]))
-                .withFilter(new MessageFilterSpecification(["type":"$subscriptionFilter2.type".toString()]))
+                .withFilter(new MessageFilterSpecification(["type": "$subscriptionFilter1.type".toString()]))
+                .withFilter(new MessageFilterSpecification(["type": "$subscriptionFilter2.type".toString()]))
                 .build();
 
         when:
@@ -108,7 +108,7 @@ class FilterChainSpec extends Specification {
         given:
         def filterSource = new MessageFilters([globalFilter1, brokenFilter], [subscriptionFilter1, subscriptionFilter2])
         def subscription = subscription("g.topic", "subscription")
-                .withFilter(new MessageFilterSpecification(["type":"$subscriptionFilter1.type".toString()])).build()
+                .withFilter(new MessageFilterSpecification(["type": "$subscriptionFilter1.type".toString()])).build()
 
         when:
         def result = new FilterChainFactory(filterSource).create(subscription).apply(testMessage())
@@ -129,7 +129,7 @@ class FilterChainSpec extends Specification {
         def order
 
         RecordingSubscriptionMessageFilterCompiler(String type, AtomicInteger counter) {
-            super(type, { m -> test(m) })
+            super(type, { m -> MockPredicate.test(m) })
             this.counter = counter
         }
 
@@ -144,6 +144,11 @@ class FilterChainSpec extends Specification {
             order = counter.getAndIncrement()
             tested = true
             tested
+        }
+
+        static class MockPredicate {
+            static boolean test(Message message) {
+            }
         }
     }
 
