@@ -5,7 +5,11 @@ import org.glassfish.hk2.api.ServiceLocator
 import pl.allegro.tech.hermes.api.ContentType
 import pl.allegro.tech.hermes.api.Topic
 import pl.allegro.tech.hermes.frontend.cache.topic.TopicsCache
-import pl.allegro.tech.hermes.schema.*
+import pl.allegro.tech.hermes.schema.CompiledSchema
+import pl.allegro.tech.hermes.schema.CompiledSchemaRepository
+import pl.allegro.tech.hermes.schema.SchemaRepository
+import pl.allegro.tech.hermes.schema.SchemaVersion
+import pl.allegro.tech.hermes.schema.SchemaVersionsRepository
 import pl.allegro.tech.hermes.test.helper.avro.AvroUser
 import pl.allegro.tech.hermes.test.helper.builder.TopicBuilder
 import spock.lang.Shared
@@ -88,8 +92,10 @@ class TopicSchemaLoadingStartupHookTest extends Specification {
         }
         SchemaVersionsRepository schemaVersionsRepositoryForTopicsWithoutSchema = Mock()
         SchemaVersionsRepository schemaVersionsRepository = [
-                versions: { Topic topic -> topic == avroTopic1 ? [version]
-                        : schemaVersionsRepositoryForTopicsWithoutSchema.versions(topic) }
+                versions: { Topic topic ->
+                    topic == avroTopic1 ?[version]
+                    : schemaVersionsRepositoryForTopicsWithoutSchema.versions(topic)
+                }
         ] as SchemaVersionsRepository
         def schemaRepository = new SchemaRepository(schemaVersionsRepository, compiledSchemaRepository)
         def hook = new TopicSchemaLoadingStartupHook(topicsCache, schemaRepository, 2, 2)

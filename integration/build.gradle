@@ -91,8 +91,8 @@ dependencies {
         exclude module: 'hornetq-native'
     }
     //jdk8
-   // testCompile group: 'org.eclipse.jetty.alpn', name: 'alpn-api', version: versions.alpn_api
-   // alpnboot group: 'org.mortbay.jetty.alpn', name: 'alpn-boot', version: getAlpnVersion()
+    testCompile group: 'org.eclipse.jetty.alpn', name: 'alpn-api', version: versions.alpn_api
+    alpnboot group: 'org.mortbay.jetty.alpn', name: 'alpn-boot', version: getAlpnVersion()
 }
 
 project.sourceSets {

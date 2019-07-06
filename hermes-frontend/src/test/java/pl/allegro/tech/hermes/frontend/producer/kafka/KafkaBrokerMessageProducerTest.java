@@ -3,7 +3,6 @@ package pl.allegro.tech.hermes.frontend.producer.kafka;
 import org.apache.kafka.clients.producer.MockProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.ByteArraySerializer;
-import org.awaitility.Awaitility;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,8 +23,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.google.common.base.Charsets.UTF_8;
+import static com.jayway.awaitility.Awaitility.await;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.*;
 import static pl.allegro.tech.hermes.test.helper.builder.TopicBuilder.topic;
 
 @RunWith(MockitoJUnitRunner.class)
