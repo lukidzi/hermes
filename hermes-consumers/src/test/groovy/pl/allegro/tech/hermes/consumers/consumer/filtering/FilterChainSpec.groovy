@@ -129,7 +129,7 @@ class FilterChainSpec extends Specification {
         def order
 
         RecordingSubscriptionMessageFilterCompiler(String type, AtomicInteger counter) {
-            super(type, { m -> MockPredicate.test(m) })
+            super(type, null)
             this.counter = counter
         }
 
@@ -144,11 +144,6 @@ class FilterChainSpec extends Specification {
             order = counter.getAndIncrement()
             tested = true
             tested
-        }
-
-        static class MockPredicate {
-            static boolean test(Message message) {
-            }
         }
     }
 
