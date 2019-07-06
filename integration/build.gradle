@@ -117,7 +117,7 @@ project.sourceSets {
 task integrationTest(type: Test) {
     def args = []
     if(JavaVersion.current() == JavaVersion.VERSION_1_8) {
-        args = ["-Xbootclasspath/a:${project.configurations.alpnboot.asPath}"]
+        args += "-Xbootclasspath/a:${project.configurations.alpnboot.asPath}"
     }
     if(project.hasProperty('tests.timeout.multiplier')) {
         args += "-Dtests.timeout.multiplier=${project.property('tests.timeout.multiplier')}"
