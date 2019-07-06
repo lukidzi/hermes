@@ -120,7 +120,7 @@ public class HermesClientPublishingTest extends IntegrationTest {
 
     private OkHttpClient getOkHttpClientWithSslContextConfigured() {
         return new OkHttpClient.Builder()
-                .sslSocketFactory(getSslContext().getSslContext().getSocketFactory(), getSslContext().getTrustManager())
+                .sslSocketFactory(getSslContext().getSslContext().getSocketFactory())//, getSslContext().getTrustManager())
                 .build();
     }
 

@@ -81,8 +81,9 @@ dependencies {
     testCompile group: 'org.freemarker', name: 'freemarker', version: '2.3.21'
     testCompile group: 'org.schemarepo', name: 'schema-repo-common', version: '0.1.3'
     testCompile group: 'io.confluent', name: 'kafka-schema-registry', version: '4.1.2'
-    testCompile group: 'org.eclipse.jetty', name: 'jetty-alpn-java-server', version: versions.jetty
-    testCompile group: 'org.eclipse.jetty', name: 'jetty-alpn-java-client', version: versions.jetty
+    testCompile group: 'org.eclipse.jetty', name: 'jetty-server', version: versions.jetty
+//    testCompile group: 'org.eclipse.jetty', name: 'jetty-alpn-java-server', version: versions.jetty
+//    testCompile group: 'org.eclipse.jetty', name: 'jetty-alpn-java-client', version: versions.jetty
     testCompile group: 'org.eclipse.jetty', name: 'jetty-servlet', version: versions.jetty
     testCompile group: 'org.eclipse.jetty', name: 'jetty-servlets', version: versions.jetty
     testCompile group: 'org.glassfish.jersey.bundles.repackaged', name: 'jersey-guava', version: '2.23.2'
@@ -115,14 +116,15 @@ project.sourceSets {
 }
 
 task integrationTest(type: Test) {
-    def args = []
-    if(JavaVersion.current() == JavaVersion.VERSION_1_8) {
-        args += "-Xbootclasspath/a:${project.configurations.alpnboot.asPath}"
-    }
+//    def args = []
+//    if(JavaVersion.current() == JavaVersion.VERSION_1_8) {
+    def args = ["-Xbootclasspath/a:${project.configurations.alpnboot.asPath}"]
+//    }
     if(project.hasProperty('tests.timeout.multiplier')) {
         args += "-Dtests.timeout.multiplier=${project.property('tests.timeout.multiplier')}"
     }
 
+    projects.logger.quiet("Test args ${args}")
     jvmArgs = args
     minHeapSize "2000m"
     maxHeapSize "3500m"
