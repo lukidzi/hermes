@@ -5,11 +5,7 @@ import org.glassfish.hk2.api.ServiceLocator
 import pl.allegro.tech.hermes.api.ContentType
 import pl.allegro.tech.hermes.api.Topic
 import pl.allegro.tech.hermes.frontend.cache.topic.TopicsCache
-import pl.allegro.tech.hermes.schema.CompiledSchema
-import pl.allegro.tech.hermes.schema.CompiledSchemaRepository
-import pl.allegro.tech.hermes.schema.SchemaRepository
-import pl.allegro.tech.hermes.schema.SchemaVersion
-import pl.allegro.tech.hermes.schema.SchemaVersionsRepository
+import pl.allegro.tech.hermes.schema.*
 import pl.allegro.tech.hermes.test.helper.avro.AvroUser
 import pl.allegro.tech.hermes.test.helper.builder.TopicBuilder
 import spock.lang.Shared
@@ -19,17 +15,23 @@ import static CachedTopicsTestHelper.cachedTopic
 
 class TopicSchemaLoadingStartupHookTest extends Specification {
 
-    @Shared SchemaVersion version = SchemaVersion.valueOf(1)
+    @Shared
+    SchemaVersion version = SchemaVersion.valueOf(1)
 
-    @Shared Topic avroTopic1 = avroTopic("g1.topic1")
+    @Shared
+    Topic avroTopic1 = avroTopic("g1.topic1")
 
-    @Shared Topic avroTopic2 = avroTopic("g1.topic2")
+    @Shared
+    Topic avroTopic2 = avroTopic("g1.topic2")
 
-    @Shared Topic jsonTopic1 = jsonTopic("g1.topic3")
+    @Shared
+    Topic jsonTopic1 = jsonTopic("g1.topic3")
 
-    @Shared Topic avroTopic3 = avroTopic("g2.topic1")
+    @Shared
+    Topic avroTopic3 = avroTopic("g2.topic1")
 
-    @Shared CompiledSchema<Schema> schema = new AvroUser().getCompiledSchema()
+    @Shared
+    CompiledSchema<Schema> schema = new AvroUser().getCompiledSchema()
 
     @Shared
     ServiceLocator serviceLocator = Mock()
@@ -86,8 +88,8 @@ class TopicSchemaLoadingStartupHookTest extends Specification {
         }
         SchemaVersionsRepository schemaVersionsRepositoryForTopicsWithoutSchema = Mock()
         SchemaVersionsRepository schemaVersionsRepository = [
-                versions: { Topic topic, boolean online -> topic == avroTopic1 ? [version]
-                        : schemaVersionsRepositoryForTopicsWithoutSchema.versions(topic, online) }
+                versions: { Topic topic -> topic == avroTopic1 ? [version]
+                        : schemaVersionsRepositoryForTopicsWithoutSchema.versions(topic) }
         ] as SchemaVersionsRepository
         def schemaRepository = new SchemaRepository(schemaVersionsRepository, compiledSchemaRepository)
         def hook = new TopicSchemaLoadingStartupHook(topicsCache, schemaRepository, 2, 2)
@@ -99,7 +101,7 @@ class TopicSchemaLoadingStartupHookTest extends Specification {
         1 * compiledSchemaRepository.getSchema(avroTopic1, version) >> schema
         0 * compiledSchemaRepository.getSchema(avroTopic3, version) >> schema
 
-        1 * schemaVersionsRepositoryForTopicsWithoutSchema.versions(avroTopic3, _) >> []
+        1 * schemaVersionsRepositoryForTopicsWithoutSchema.versions(avroTopic3) >> []
     }
 
     def "should fail to load after reaching max retries count"() {
@@ -137,9 +139,9 @@ class TopicSchemaLoadingStartupHookTest extends Specification {
 
     private SchemaVersionsRepository schemaVersionsRepositoryForAvroTopics() {
         [
-            versions: { Topic topic, boolean online ->
-                topic.contentType == ContentType.AVRO ? [version] : []
-            }
+                versions: { Topic topic ->
+                    topic.contentType == ContentType.AVRO ? [version] : []
+                }
         ] as SchemaVersionsRepository
     }
 
